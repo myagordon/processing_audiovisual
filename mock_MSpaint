@@ -1,0 +1,359 @@
+ //I'm using the controlP5 library to implement most UI features (buttons, sliders, ect).
+ import controlP5.*;
+ //declare instance of controlP5 class
+ ControlP5 cp5;
+ color current_color;
+ String brushShape = "circle";
+ // 6 brush options total; three circular brushes and three square brushes. 
+ int[] circleSizes = {5, 10, 20};
+ int[] squareSizes = {5, 10, 20};
+ int brushSize = circleSizes[0];
+ 
+ //Custom color variables for define custom color feature. 
+ float redValue = 0;
+ float greenValue = 0;
+ float blueValue = 0;
+ Slider redSlider, greenSlider, blueSlider;
+ 
+ //Brush button labels. Type 1 for small circle, 2 for medium circle, ect. 
+ //User can also select brushes by clicking on the buttons. 
+ String c1 = "1"; //small circle
+ String c2 = "2"; //medium circle
+ String c3 = "3"; //large circle
+ String s1 = "4"; //small square
+ String s2 = "5"; //medium square
+ String s3 = "6"; //large square
+ 
+ //Pixel density variables. 
+ Slider densitySlider;
+ float density = 20;    
+ 
+ void setup(){
+   size(900,700);
+   background(250);
+   frameRate(100000);  //My attempt at increasing the frame rate as much as possible. Fix this. 
+   cp5 = new ControlP5(this); //Initialize instance of controlP5 class.
+   current_color = color(0,0,0); //Default brush color to black.
+   
+   //Color buttons. These are located on the bottom grey panel.
+   //These are dummy buttons, .addButton just displays the buttons.  
+   cp5.addButton("colorRed")
+     .setLabel("")
+     .setColorBackground(color(255, 0, 0))
+     .setPosition(130, height - 55)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorGreen")
+     .setLabel("")
+     .setColorBackground(color(0, 255, 0))
+     .setPosition(180, height - 55)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorBlue")
+     .setLabel("")
+     .setColorBackground(color(0, 0, 255))
+     .setPosition(230, height - 55)
+     .setSize(40, 40);
+   
+   cp5.addButton("colorBlack")
+     .setLabel("")
+     .setColorBackground(color(0, 0, 0))
+     .setPosition(280, height - 55)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorGrey")
+     .setLabel("")
+     .setColorBackground(color(128, 128, 128))
+     .setPosition(330, height - 55)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorPurple")
+     .setLabel("")
+     .setColorBackground(color(158, 50, 168))
+     .setPosition(330, height - 105)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorOrange")
+     .setLabel("")
+     .setColorBackground(color(255, 125, 0))
+     .setPosition(130, height - 105)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorYellow")
+     .setLabel("")
+     .setColorBackground(color(240, 245, 0))
+     .setPosition(180, height - 105)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorBrown")
+     .setLabel("")
+     .setColorBackground(color(180, 75, 10))
+     .setPosition(230, height - 105)
+     .setSize(40, 40);
+     
+   cp5.addButton("colorPink")
+     .setLabel("")
+     .setColorBackground(color(245, 150,170))
+     .setPosition(280, height - 105)
+     .setSize(40, 40);
+     
+   cp5.addButton("dummyEraser")
+     .setLabel("Eraser")
+     .setPosition(30, height - 500)
+     .setSize(80, 60);
+     
+   cp5.addButton("customColor")
+     .setLabel("Define Custom Color")
+     .setPosition(330, height - 105)
+     .setSize(90, 40);
+     
+   //Custom color buttons. These are hidden until user pushes custom color button.
+   //Custom color sliders disappear when user selects a predefined color. 
+   redSlider = cp5.addSlider("redValue")
+     .setPosition(440, height - 115)
+     .setSize(200, 20)
+     .setRange(0, 255)
+     .hide();
+   greenSlider = cp5.addSlider("greenValue")
+     .setPosition(440, height - 90)
+     .setSize(200, 20)
+     .setRange(0, 255)
+     .hide();
+   blueSlider = cp5.addSlider("blueValue")
+     .setPosition(440, height - 65)
+     .setSize(200, 20)
+     .setRange(0, 255)
+     .hide();
+
+  //Pixel density slider to adjust preciseness of stroke.
+  densitySlider = cp5.addSlider("density")
+    .setPosition(440, height - 30) 
+    .setSize(200, 20)
+    .setRange(1, 20)   // Range of density values.
+    .setValue(20);      // Default value (highest density). 
+ }
+ 
+ //Color functions are automatically called when button is clicked by user. 
+ void colorRed() {
+  current_color = color(255, 0, 0);
+  redSlider.hide(); //Hide custom color sliders when selected. 
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorGreen() {
+  current_color = color(0, 255, 0);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorBlue() {
+  current_color = color(0, 0, 255);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorBlack() {
+  current_color = color(0, 0, 0);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorGrey() {
+  current_color = color(128, 128, 128);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorPurple() {
+  current_color = color(158, 50, 168);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorOrange() {
+  current_color = color(255, 125, 0);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorYellow() {
+  current_color = color(240, 245, 0);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorBrown() {
+  current_color = color(180, 75, 10);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void colorPink() {
+  current_color = color(245, 150,170);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void dummyEraser() {
+  current_color = color(250);
+  redSlider.hide();
+  greenSlider.hide();
+  blueSlider.hide();
+}
+
+void customColor() {
+  // Show the RGB sliders when the custom color button is clicked
+  redSlider.show();
+  greenSlider.show();
+  blueSlider.show();
+}
+
+//Allows user to select brushes on the left panel by clicking their buttons. 
+void mouseClicked() {
+  //small circle brush
+  if(mouseX>(45-circleSizes[0]*2.7) && mouseX<(45+circleSizes[0]*2.7) && mouseY>(300-circleSizes[0]*2.7) && mouseY< 300+circleSizes[0]*2.7) {
+    brushShape = "circle";
+    brushSize = circleSizes[0];
+  }
+  //medium circle brush
+  else if(mouseX>(45-circleSizes[1]*2.2) && mouseX<(45+circleSizes[1]*2.2) && mouseY>(330-circleSizes[1]*2.2) && mouseY< 330+circleSizes[1]*2.2) {
+    brushShape = "circle";
+    brushSize = circleSizes[1];
+  }
+  //large circle brush
+  else if(mouseX>(45-circleSizes[2]*1.8) && mouseX<(45+circleSizes[2]*1.8) && mouseY>(375-circleSizes[2]*1.8) && mouseY< 375+circleSizes[2]*1.8) {
+    brushShape = "circle";
+    brushSize = circleSizes[2];
+  }
+  //small square brush
+  else if(mouseX>(95-squareSizes[0]*2) && mouseX<(95+squareSizes[0]*2) && mouseY>(300-squareSizes[0]*2) && mouseY< 300+squareSizes[0]*2) {
+    brushShape = "square";
+    brushSize = squareSizes[0];
+  }
+  //medium square brush
+  else if(mouseX>(95-squareSizes[1]*2) && mouseX<(95+squareSizes[1]*2) && mouseY>(330-squareSizes[1]*2) && mouseY< 330+squareSizes[1]*2) {
+    brushShape = "square";
+    brushSize = squareSizes[1];
+  }
+  //large square brush
+  else if(mouseX>(95-squareSizes[2]*2) && mouseX<(95+squareSizes[2]*2) && mouseY>(375-squareSizes[2]*2) && mouseY< 375+squareSizes[2]*2) {
+    brushShape = "square";
+    brushSize = squareSizes[2];
+  }
+}
+
+//An alternative way to select brush size and shape is by pressing keys 1-6. 
+void keyPressed(){
+  //small circle brush
+  if (key =='1') {
+    brushShape = "circle";
+    brushSize = circleSizes[0];
+  }
+  //medium circle brush
+  else if (key =='2') {
+    brushShape = "circle";
+    brushSize = circleSizes[1];
+  }
+  //large circle brush
+  else if (key =='3') {
+    brushShape = "circle";
+    brushSize = circleSizes[2];
+  }
+  //small square brush
+  else if (key =='4') {
+    brushShape = "square";
+    brushSize = squareSizes[0];
+  }
+  //medium square brush
+  else if (key =='5') {
+    brushShape = "square";
+    brushSize = squareSizes[1];
+  }
+  //large square brush
+  else if (keyPressed && key =='6') {
+    brushShape = "square";
+    brushSize = squareSizes[2];
+  }
+}
+
+  // This function automaticaly draws when mouse is dragged by user.
+ void mouseDragged() {
+  // Checks if the mouse is within the drawing area.
+  if(mouseX > width/6.3 && mouseY < height - 120) {
+    noStroke();
+    fill(current_color);
+    // Draw multiple ellipses/squares based on the density value.
+    // Higher density = more shapes drawn = higher precision. 
+    for (int i = 0; i < density; i++) {
+      // Generate slight random offsets for each shape for a pixelated effect, based on brushsize.
+      float offsetX = random(-brushSize/2, brushSize/2);
+      float offsetY = random(-brushSize/2, brushSize/2);
+      
+      if(brushShape.equals("circle")) { // circular brush draws
+        ellipse(mouseX + offsetX, mouseY + offsetY, brushSize, brushSize);
+      } else { //sqaure brush draws
+        rectMode(CENTER);
+        rect(mouseX + offsetX, mouseY + offsetY, brushSize, brushSize);
+      }
+    }
+  }
+}
+
+
+ void draw(){
+   fill(205);
+   noStroke();
+   rect(0, 0, width/6.8, height+800);  // Bottom grey panel for color buttons.
+   rect(0, 920, width*2, height);  //Left hand side grey panel for brushes and eraser buttons.
+   
+   density = densitySlider.getValue(); //Continually extracts pixel density.  
+   
+   //Generate black brush buttons and their white text labels.
+   // Draw circle buttons.
+   fill(30);
+   ellipse(45, 300, circleSizes[0]*2.7, circleSizes[0]*2.7);
+   fill(255); 
+   text(c1, 42, 304);
+   fill(30);
+   ellipse(45, 330, circleSizes[1]*2.2, circleSizes[1]*2.2);
+   fill(255);
+   text(c2, 42, 334);
+   fill(30);
+   ellipse(45, 375, circleSizes[2]*1.8, circleSizes[2]*1.8);
+   fill(255);
+   text(c3, 42, 378);
+   // Draw square buttons.
+   rectMode(CENTER);
+   fill(30);
+   rect(95, 300, squareSizes[0]*2, squareSizes[0]*2);
+   fill(255);
+   text(s1, 93, 304);
+   fill(30);
+   rect(95, 330, squareSizes[1]*2, squareSizes[1]*2);
+   fill(255);
+   text(s2, 93, 334);
+   fill(30);
+   rect(95, 375, squareSizes[2]*2, squareSizes[2]*2);
+   fill(255);
+   text(s3,93,378);
+    
+   //Rectangle containing current_color so user knows what color is selected.
+   fill(current_color);
+   rect(85,640, 40, 40);
+   
+   //Updates current color with custom color if appropriate.
+   if(redSlider.isVisible() || greenSlider.isVisible() || blueSlider.isVisible()){
+    current_color = color(redValue, greenValue, blueValue);
+  }
+   
+}

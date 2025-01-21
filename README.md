@@ -1,0 +1,1 @@
+Mock MSPaint is my simplified recreation of Microsoft Paint, tailored specifically for pixel art. Designed to provide an intuitive and streamlined experience for creating pixel-based artwork. The project was good for familiarizing myself with Processing, a Java-based language for audio-visual programming.

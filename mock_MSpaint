@@ -1,6 +1,5 @@
  //I'm using the controlP5 library to implement most UI features (buttons, sliders, ect).
  import controlP5.*;
- //declare instance of controlP5 class
  ControlP5 cp5;
  color current_color;
  String brushShape = "circle";
@@ -32,7 +31,7 @@
    size(900,700);
    background(250);
    frameRate(100000);  //My attempt at increasing the frame rate as much as possible. Fix this. 
-   cp5 = new ControlP5(this); //Initialize instance of controlP5 class.
+   cp5 = new ControlP5(this); 
    current_color = color(0,0,0); //Default brush color to black.
    
    //Color buttons. These are located on the bottom grey panel.

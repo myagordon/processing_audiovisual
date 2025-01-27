@@ -1,0 +1,149 @@
+/*
+This sketch creates a grid-based landscape where each cell can glitch based on user input.
+The glitches simulate real analog glitches you'd see on an old TV 
+by shifting color channels and creating random noise. 
+I ended up using a bunch of new functions, including blendMode()
+which is used to layer glitch effects.
+*/
+
+int gridSize = 6; 
+int cols, rows; 
+color baseColor;
+color glitchColor;
+float glitchProbability; // Can be changed based on user input.
+PImage windowsLogo; // Holds windows logo.
+float logoX, logoY; // Coordinates to position logo.
+color[] palette = { //Array of colors, used to randomize color of glitches.
+  color(50, 50, 50),   
+  color(100, 100, 100), 
+  color(150, 150, 150), 
+  color(200, 200, 200), 
+  color(255, 255, 255)  
+};
+
+void setup() {
+  size(800, 600);
+  cols = width / gridSize; // Must be initialized after size()**
+  rows = height / gridSize;
+  color steelGray = color(112, 128, 144);  // Steel grey color for background.
+  glitchColor = color(255, 255, 255); 
+  noStroke();
+  
+  blendMode(ADD); // This allows for additive blending so I can layer glitches w white clip.
+  // https://processing.org/reference/blendMode_.html
+  
+  glitchProbability = 0.05; 
+  
+  windowsLogo = loadImage("windows.png"); // I included image as png in my exercise 3 folder.
+  windowsLogo.resize(300, 300); 
+  // Set the position for the logo in center.
+  logoX = (width - windowsLogo.width) / 2;
+  logoY = (height - windowsLogo.height) / 2;
+}
+
+void draw() {
+  background(baseColor);
+  
+  for (int i = 0; i < cols; i++) { // Iterate through each grid cell with a nested for loop.
+    for (int j = 0; j < rows; j++) {
+      float x = i * gridSize; // Calculate row and column number of pixel.
+      float y = j * gridSize;
+      // Randomly choose if cell should glitch.
+      boolean cellGlitching = random(1) < glitchProbability;
+
+      float distanceToMouse = dist(x + gridSize/2, y + gridSize/2, mouseX, mouseY);
+      if (distanceToMouse < 30 && random(1) < 0.60) { // Increased chance glitch will happen if user's mouse is nearby.
+        cellGlitching = true;
+      }
+      
+      if (cellGlitching) { // Glitch #1: Shift color channels to create a chromatic color distortion effect.
+        pushMatrix(); // Saves the current transformation matrix.
+        translate(x, y);
+        
+        // Shift red channels.
+        fill(red(glitchColor), 0, 0, 100);
+        rect(2, 0, gridSize, gridSize);
+   
+        // Shift green channels.
+        fill(0, green(glitchColor), 0, 100);
+        rect(-2, 0, gridSize, gridSize);
+        
+        // Shift blue channels.
+        fill(0, 0, blue(glitchColor), 100);
+        rect(0, 2, gridSize, gridSize);
+        
+        popMatrix(); // Restores the original transformation matrix last saved on the stack.
+      } else { // No glitch = screen is original base color. 
+        fill(baseColor);
+        rect(x, y, gridSize, gridSize);
+      }
+      
+      // Glitch #2: Add random noise to simulate analog static lines.
+      if (cellGlitching && random(1) < 0.3) { // 30% chance that static line appears.
+        fill(255, 255, 255, 400); // Semi-transparent white for static lines.
+        rect(x + random(-2, 2), y + random(-2, 2), 2, 2);
+      }
+      
+      // Glitch #3: Add flickering effect.
+      if (cellGlitching && random(1) < 0.5) { // 50% chance to flicker.
+        fill(palette[int(random(5))]);
+        rect(x, y, gridSize, gridSize);
+      }
+      
+      // Glitch #4: Add screen tearing effect occasionally.
+      if (random(1) < 0.01) { // 0.1% chance per frame to trigger tearing. Program will crash if you up this value!!
+        drawScreenTear(); //Screen tears handled by seperate function.
+      }
+    }
+  }
+  drawScanlines(); //To mimick old CRT display scan lines. 
+  blendMode(BLEND);
+  tint(255, 228); // Slightly transparent for a faded look.
+  image(windowsLogo, logoX, logoY); // Load image on top of glitches in blendmode.
+  // Back to add mode for layering beneath image.
+  blendMode(ADD);
+}
+
+// Function to handle screen tearing by shifting a random row.
+void drawScreenTear() {
+  int tearRow = int(random(rows)); //Choose random row to tear.
+  float shiftAmount = random(-gridSize, gridSize); //Choose random amount to tear by. 
+  pushMatrix();
+  translate(shiftAmount, tearRow * gridSize);
+  
+  for (int i = 0; i < cols; i++) {
+    float x = i * gridSize;
+    float y = 0; // Y pos is 0 relative to translated position.
+    boolean cellGlitching = random(1) < glitchProbability;
+    if (cellGlitching) {
+      fill(palette[int(random(5))]);
+      rect(x, y, gridSize, gridSize);
+    } else {
+      fill(baseColor);
+      rect(x, y, gridSize, gridSize);
+    }
+  }
+  
+  popMatrix();
+}
+
+// Function to draw mock scanlines over the entire screen.
+void drawScanlines() {
+  stroke(250, 35); // Semi-transparent black lines.
+  strokeWeight(1);
+  for (int y = 0; y < height; y += 3) { //Space out scan lines by 3 pixels.
+    line(0, y, width, y);
+  }
+}
+
+// User can toggle probability of glitch occurring by hitting 'g'. 
+void keyPressed() {
+  if (key == 'g' || key == 'G') {
+    // Toggle glitch probability between low and high.
+    if (glitchProbability < 0.2) { // Threshold at 20% chance of glitch. 
+      glitchProbability += 0.05;
+    } else {
+      glitchProbability = 0.05;
+    }
+  }
+}
